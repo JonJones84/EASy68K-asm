@@ -160,6 +160,8 @@ void REMOVECR(char *line);
 #define MAX_ARGS 36       // maximum number of macro arguments
 #define ARG_SIZE 256      // maximum size of each argument
 
+#define LIST_DATA_BUFFER_SIZE 49
+
 /* Structure for operand descriptors */
 struct opDescriptor
 {
