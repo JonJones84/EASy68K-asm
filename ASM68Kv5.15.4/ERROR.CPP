@@ -246,7 +246,6 @@ int printError(FILE *outFile, int errorCode, int lineNum)
 
   // if include file then display error in proper window
   if (includeFile[0]) {         // if not NULL
-    bool openIncFile = true;    // open included file when true
     AnsiString incFile(includeFile);
 
     /*** RA ***

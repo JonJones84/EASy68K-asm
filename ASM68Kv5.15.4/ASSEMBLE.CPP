@@ -193,7 +193,6 @@ void REMOVECR(char *line)
 int assembleFile(char fileName[], char tempName[], AnsiString workName)
 {
   AnsiString outName;
-  int i;
 
   try {
     tmpFile = fopen(tempName, "w+");
@@ -317,9 +316,6 @@ char *skipSpace(char *p)
 int processFile()
 {
   int error;
-  bool comment;                 // true when line is comment
-  int value;
-  bool backRef;
 
   try {
     offsetMode = false;         // clear flags
