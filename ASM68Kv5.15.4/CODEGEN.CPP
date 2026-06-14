@@ -53,7 +53,6 @@
  *
  ************************************************************************/
 
-// include <vcl.h>
 #include <stdio.h>
 #include "asm.h"
 
@@ -77,9 +76,6 @@ int output(int	data, int size)
 
 int effAddr(opDescriptor *operand)
 {
-  //TMsgDlgButtons temp_set; //message dialog stuff
-  //temp_set << mbOK;
-
   if (operand->mode == DnDirect)
     return 0x00 | operand->reg;
 
@@ -117,7 +113,6 @@ int effAddr(opDescriptor *operand)
     return 0x3C;
 
   snprintf(buffer, sizeof(buffer),"INVALID EFFECTIVE ADDRESSING MODE!\n");
-  //Application->MessageBox(buffer, "Error", MB_OK);
     fprintf(stderr,"%s\n",buffer);
   exit (0);
 
@@ -154,7 +149,7 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
 	disp -= loc;
       output((( (int) (op->size) == LONG_SIZE) ? 0x800 : 0)
 	        | (op->index << 12) | (disp & 0xFF), WORD_SIZE);
-      if (disp < -128 || disp > 127)            //CK 3.7.3 undo 2.9.2 change
+      if (disp < -128 || disp > 127)
 	NEWERROR(*errorPtr, INV_DISP);
     }
     loc += 2;
@@ -176,20 +171,16 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
     if (!size || size == WORD_SIZE) {
       if (pass2) {
 	output(op->data & 0xFFFF, WORD_SIZE);
-//	if (op->data > 0xffff)                          // Sep-2008
-//	  NEWERROR(*errorPtr, INV_16_BIT_DATA);         // "
-      if (op->data < -32768 || op->data > 65535)        // "
-	  NEWERROR(*errorPtr, INV_16_BIT_DATA);         // "
+      if (op->data < -32768 || op->data > 65535)
+	  NEWERROR(*errorPtr, INV_16_BIT_DATA);
       }
       loc += 2;
     }
     else if (size == BYTE_SIZE) {
       if (pass2) {
 	output(op->data & 0xFF, WORD_SIZE);
-//	if (op->data < -32768 || op->data > 32767)      // Sep-2008
-//	  NEWERROR(*errorPtr, INV_8_BIT_DATA);          // "
-	if (op->data < -128 || op->data > 255)          // "
-	  NEWERROR(*errorPtr, INV_8_BIT_DATA);          // "
+	if (op->data < -128 || op->data > 255)
+	  NEWERROR(*errorPtr, INV_8_BIT_DATA);
 
       }
       loc += 2;
@@ -201,7 +192,6 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
     }
   } else {
     snprintf(buffer, sizeof(buffer),"INVALID EFFECTIVE ADDRESSING MODE!\n");
-   //Application->MessageBox(buffer, "Error", MB_OK);
      fprintf(stderr,"%s\n",buffer);
    return MILD_ERROR;
   }

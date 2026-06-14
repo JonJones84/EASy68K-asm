@@ -44,9 +44,9 @@ bool includedFileError; // true if include error message displayed
 FILE *inFile;		// Input file
 FILE *listFile;		// Listing file
 FILE *objFile;		// Object file (S-Record)
-FILE *binFile;          //ck Object file (Binary)
-FILE *tmpFile;          //ck temp file
-FILE *errFile;          //ck Error messages file (text)
+FILE *binFile;      // Object file (Binary)
+FILE *tmpFile;      // temp file
+FILE *errFile;      // Error messages file (text)
 
 // Listing information
 char line[256];		// Source line
@@ -68,18 +68,6 @@ bool noFileName;        // true indicates no name for current source file
 
 // Editor flags
 tabTypes tabType;
-////bool maximizedEdit;     // true starts child window in editor maximized
-////bool autoIndent;        // true, copies whitespace from preceding line
-////bool realTabs;          // true, use real tabs in editor, false, use spaces
-//FontStyle codeStyle;
-//FontStyle unknownStyle;
-//FontStyle directiveStyle;
-//FontStyle commentStyle;
-//FontStyle labelStyle;
-//FontStyle structureStyle;
-//FontStyle errorStyle;
-//FontStyle textStyle;
-//TColor backColor;
 
 // Sturctured Assembly
 unsigned int stcLabelI;  // structured if label number

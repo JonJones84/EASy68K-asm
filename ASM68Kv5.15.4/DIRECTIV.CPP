@@ -34,12 +34,9 @@
  ************************************************************************/
 
 
-// include <vcl.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "asm.h"
-// include "mainS.h"
-// include "textS.h"
 
 extern int loc;
 extern int locOffset;
@@ -52,7 +49,7 @@ extern bool pass2, endFlag, listFlag;
 extern char *listPtr;	/* Pointer to buffer where listing line is assembled
 			   (Used to put =XXXXXXXX in the listing for EQU's and SET's */
 extern char listData[LIST_DATA_BUFFER_SIZE];
-extern char buffer[256];  //ck used to form messages for display in windows
+extern char buffer[256];  // used to form messages for display in windows
 
 extern unsigned int startAddress;      // starting address of program
 extern bool CREflag;    // true adds symbol table to listing
@@ -207,10 +204,6 @@ int offset(int size, char *label, char *op, int *errorPtr)
 /***********************************************************************
  *	END directive.
  ***********************************************************************/
- // modified by CK
- // Allows starting address to be specified as operand for compatibility
- // with Teeside emulator. Defaults to starting address of $1000.
-
 int funct_end(int size, char *label, char *op, int *errorPtr)
 {
   int newLoc;
@@ -276,7 +269,7 @@ int equ(int size, char *label, char *op, int *errorPtr)
       }	else {
 	define(label, value, pass2, true, errorPtr);
 	if (pass2 && listFlag && *errorPtr < MINOR) {
-	  snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value); // RA suppress warning on modern 64 bit machines
+	  snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value);
 	  listPtr += 10;
 	}
       }
@@ -306,20 +299,16 @@ int set(int size, char *label, char *op, int *errorPtr)
   }
   error = OK;
   op = eval(op, &value, &backRef, errorPtr);
-//  if (*errorPtr < SEVERE && !backRef) {       // ck 4-18-03
-//    NEWERROR(*errorPtr, INV_FORWARD_REF);
-//  }
-//  else
-   if (*errorPtr < ERRORN)          // ck 4-18-03
+   if (*errorPtr < ERRORN)
     if (isspace(*op) || !*op)
       if (!*label) {
 	NEWERROR(*errorPtr, LABEL_REQUIRED);
       } else {
 	error = OK;
-	symbol = define(label, value, pass2, false, &error);   // ck 4-18-03
+	symbol = define(label, value, pass2, false, &error);
 	symbol->flags |= REDEFINABLE;
 	if (pass2 & listFlag) {
-	  snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value); // supress size warning on 64 bit machines
+	  snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value);
 	  listPtr += 10;
 	}
       }
@@ -391,10 +380,6 @@ notString:                              // process non strings
       op = eval(op, &outVal, &backRef, errorPtr);
       if (*errorPtr > SEVERE)
 	return NORMAL;
-      //if (!isspace(*op) && *op != ',') {
-      //	NEWERROR(*errorPtr, SYNTAX);
-      //	return NORMAL;
-      //}
       if (pass2)
 	output(outVal, size);
       loc += size;
@@ -406,9 +391,6 @@ notString:                              // process non strings
     }
     op = skipSpace(op);               // skip spaces
   } while (*op++ == ',');
-//  --op;
-//  if (!isspace(*op) && *op)
-//    NEWERROR(*errorPtr, SYNTAX);
 
   return NORMAL;
 }
@@ -620,7 +602,6 @@ int opt(int size, char *label, char *op, int *errorPtr)
       BITflag = true;             // enable bit field support
       if (pass2 && listFlag) {
         listLine((char *)"*[sim68k]bitfield\n");        // enables bit field support in Sim68K
-        //^ RA suppress DIRECTIV.CPP:623:39: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
       }
     }
     else
@@ -660,15 +641,13 @@ int include(int size, char *label, char *fileName, int *errorPtr)
   if (*label)
     define(label, loc, pass2, true, errorPtr);
 
-  //strcap(capLine, fileName); // RA do not uppercase the file name it breaks on linux
   strncpy(capLine,(const char *)fileName,256); // ^
-  //fprintf(listFile,"Including filename ::%s::\n",capLine); // RA debug
 
   // strip quotes from filename
   src = capLine;
   dst = capLine;
   src = skipSpace(src);         // skip leading spaces in filename
-  if (*src == '\"' || *src == '\'') {       // *ck 12-9-2005
+  if (*src == '\"' || *src == '\'') {
     quote = *src;
     src++;
   } else
@@ -694,9 +673,9 @@ int include(int size, char *label, char *fileName, int *errorPtr)
   try {
     incFile = fopen(capLine, "r");     // attempt to open include file
     if (!incFile) {                    // if error opening file
-      fprintf(stderr,"Could not open file ::%s::\n",capLine); // RA - looks like file names get uppercased which breaks on linux
+      fprintf(stderr,"Could not open file ::%s::\n",capLine);
       if (listFile!=NULL) 
-          fprintf(listFile,"Could not open file ::%s::\n",capLine); // RA - looks like file names get uppercased which breaks on linux
+          fprintf(listFile,"Could not open file ::%s::\n",capLine);
 
       NEWERROR(*errorPtr, FILE_ERROR);     // error, invalid syntax
       return SEVERE;
@@ -709,18 +688,6 @@ int include(int size, char *label, char *fileName, int *errorPtr)
 
     // check to see if the included file is already open
     AnsiString includeFileStr(includeFile);
-    // fprintf(listFile,";Successfully opened include file :::%s:::\n",capLine); // RA debug
-
-    /* RA
-    for(int i = Main->MDIChildCount-1; i >= 0; i--) {
-      TextStuff = (TTextStuff*)Main->MDIChildren[i];
-      //if(TextStuff->Project.CurrentFile == includeFileStr) { // if file already open
-      if(ExpandFileName(TextStuff->Project.CurrentFile).AnsiCompareIC(ExpandFileName(includeFileStr)) == 0) {
-        TextStuff->Messages->Height = 7;
-        TextStuff->Messages->Items->Clear();
-        TextStuff->Messages->Enabled = false;
-      }
-    } */
 
     // assemble each line of the include file
     // until END directive or EOF
@@ -746,7 +713,7 @@ int include(int size, char *label, char *fileName, int *errorPtr)
 
     if (pass2 && listFlag) {
       skipList = true;      // don't list INCLUDE statement again
-      listLine((char *)"-------------------- end include --------------------\n"); // RA suppress DIRECTIV.CPP:745:73: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+      listLine((char *)"-------------------- end include --------------------\n");
     }
 
   }
@@ -842,7 +809,7 @@ int incbin(int size, char *label, char *fileName, int *errorPtr)
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'incbin'. \n");
     printError(NULL, EXCEPTION, 0);
-    return SEVERE; // RA WAS NULL
+    return SEVERE;
   }
   return NORMAL;
 }
@@ -1014,8 +981,6 @@ int simhalt(int size, char *label, char *op, int *errorPtr)
     define(label, loc, pass2, true, errorPtr);
 
   if (pass2) {
-    //if (listFlag)       // if directive should be listed
-    //  listLine(line);
     output(0xFFFF, WORD_SIZE);  // opcode $FFFF $FFFF
     output(0xFFFF, WORD_SIZE);  // opcode $FFFF $FFFF
   }

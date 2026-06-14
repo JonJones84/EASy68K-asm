@@ -151,7 +151,7 @@ int asmMacro(int size, char *label, char *arg, int *errorPtr)
   for (argN=0; argN < MAX_ARGS; argN++) // for all of arguments[] array
     arguments[argN][0] = '\0';
 
-  // Added following to support size extensions on macro calls.
+  // added following to support size extensions on macro calls.
   // Argument \0 is reserved for size and defaults to .W
 
   switch (size) {
@@ -195,7 +195,7 @@ int asmMacro(int size, char *label, char *arg, int *errorPtr)
     i = 0;
     textArg = false;
     while ( *capL && ( (*capL != ',' && !(isspace(*capL)) ) || textArg )) {
-      if (*capL == '<') {               // if <         *ck 12-7-2005
+      if (*capL == '<') {               // if <
         if (!textArg)                   // if not text mode
           textArg = true;               // set text mode flag
         else

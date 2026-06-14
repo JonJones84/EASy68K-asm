@@ -28,12 +28,8 @@
  *
  ************************************************************************/
 
-
-// include <vcl.h>
 #include <stdio.h>
 #include <ctype.h>
-// include "mainS.h"
-// include "textS.h"
 #include "asm.h"
 
 // prototype
@@ -42,7 +38,7 @@ void writeBigEndian(int data, int size);
 extern char line[256];
 extern FILE *binFile;
 extern char newOrg;
-extern char buffer[256];  //ck used to form messages for display in windows
+extern char buffer[256];  //Used to form messages for display in windows
 extern char numBuf[20];
 extern bool offsetMode;
 
@@ -61,7 +57,6 @@ int initBin(char *name)
   binFile = fopen(name, "wb");  // create binary file
   if (!binFile) {
     snprintf(buffer, sizeof(buffer),"Unable to create binary file!");
-    //Application->MessageBox(buffer, "Error", MB_OK);
       fprintf(stderr,"%s\n",buffer);
     return MILD_ERROR;
   }
@@ -72,24 +67,12 @@ int initBin(char *name)
   binAddr = 0;                          // default address
 
   fileSize = 0;                         // 0 bytes in header
-//  fileSize = 20;                        // 20 bytes in header
-
-  // write Teeside header to file (removed in EASy68K v4.4.4)
-  //writeBigEndian(0x0001, WORD_SIZE);         // version # ?
-  //writeBigEndian(0, LONG_SIZE);              // # of sections (update later)
-  //writeBigEndian(0, LONG_SIZE);              // unknown
-  //writeBigEndian(0, LONG_SIZE);              // starting address (update later)
-  //writeBigEndian(0x2800, WORD_SIZE);         // unknown
-  //writeBigEndian(0, LONG_SIZE);              // unknown
-
   return NORMAL;
 }
 
 
 int outputBin(int newAddr, int data, int size)
 {
-//  int zero = 0;
-
   try {
   if (offsetMode)       // don't write data if processing Offset directive
     return NORMAL;
@@ -158,14 +141,6 @@ int finishBin()
   writeBigEndian(byteCount, LONG_SIZE);     // write previous sections byte count
 
   rewind(binFile);                      // rewind to start of file
-
-  // write Teeside header to file  removed in EASy68K v4.4.4
-  //writeBigEndian(0x0001, WORD_SIZE);         // version # ?
-  //writeBigEndian(sectionCount, LONG_SIZE);   // # of sections
-  //writeBigEndian(0, LONG_SIZE);              // unknown
-  //writeBigEndian(startAddress, LONG_SIZE);   // starting address
-  //writeBigEndian(0x2800, WORD_SIZE);         // unknown
-  //writeBigEndian(0, LONG_SIZE);              // unknown
 
   // close the file
   fclose(binFile);

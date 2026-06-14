@@ -73,15 +73,10 @@
        ENDC ends the conditional section.
  ************************************************************************/
 
-// include <vcl.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "asm.h"
 
-// include "assembleS.h"
-// include "mainS.h"
-// include "textS.h"
-// include "editorOptions.h"
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -116,7 +111,6 @@ extern bool xrefFlag;	        // True if a cross-reference is desired
 extern bool CEXflag;	        // True is Constants are to be EXpanded
 extern bool BITflag;            // True to assemble bitfield instructions
 extern char lineIdent[];        // "mmm" used to identify macro in listing
-//extern char arguments[MAX_ARGS][ARG_SIZE+1];    // macro arguments
 
 extern bool CREflag, MEXflag, SEXflag;   // assembler directive flags
 extern bool noENDM;             // set true if no ENDM in macro
@@ -151,14 +145,10 @@ extern bool mapRead;
 extern bool mapProtected;
 extern bool mapInvalid;
 
-// RA extern stack<int,vector<int> > stcStack;
 extern std::stack<int> stcStack;
-// RA extern stack<char, vector<char> > dbStack;
 extern std::stack<char> dbStack;
-// RA extern stack<String, vector<String> > forStack;
 extern std::stack<string> forStack;
 
-//--- added by RA --------------------------------------------
 #ifndef ChangeFileExt
 string ChangeFileExt(string in, const string& newExt) {
    
@@ -174,7 +164,6 @@ string ChangeFileExt(string in, const string& newExt) {
 }
 #endif
 
-//--- added by github.com/dmo2118
 void REMOVECR(char *line)
 {
   size_t len = strnlen(line, 256);
@@ -198,29 +187,26 @@ int assembleFile(char fileName[], char tempName[], AnsiString workName)
     tmpFile = fopen(tempName, "w+");
     if (!tmpFile) {
       snprintf(buffer, sizeof(buffer),"Error creating temp file.");
-//      Application->MessageBox(buffer, "Error", MB_OK);
       fprintf(stderr,"%s\n",buffer);
       return SEVERE;
     }
 
     inFile = fopen(fileName, "r");
     if (!inFile) {
-//      Application->MessageBox("Error reading source file.", "Error", MB_OK);
       fprintf(stderr,"%s\n",buffer);
       return SEVERE;
     }
 
     // if generate listing is checked then create .L68 file
-//    if (Options->chkGenList->Checked) {
-    if (listFlag) { // RA
+    if (listFlag) {
       outName = ChangeFileExt(workName, ".L68");
-      initList((char *)outName.c_str());      //RA          // initialize list file
+      initList((char *)outName.c_str());      // initialize list file
     }
 
     // if Object file flag then create .S68 file (S-Record)
     if (objFlag) {
       outName = ChangeFileExt(workName, ".S68");
-      if(initObj((char *)outName.c_str()) != NORMAL)  // RA   // if error initializing object file
+      if(initObj((char *)outName.c_str()) != NORMAL)   // if error initializing object file
         objFlag = false;                        // disable object file creation
     }
 
@@ -234,7 +220,7 @@ int assembleFile(char fileName[], char tempName[], AnsiString workName)
     if (objFlag)
       finishObj();
 
-    clearSymbols();               //ck clear symbol table memory
+    clearSymbols();
 
     // clear stacks used in structured assembly
     while(stcStack.empty() == false)
@@ -244,24 +230,11 @@ int assembleFile(char fileName[], char tempName[], AnsiString workName)
     while(forStack.empty() == false)
       forStack.pop();
 
-//    // minimize message area if no errors or warnings
-//    if (warningCount == 0 && errorCount == 0) {
-//      TTextStuff *Active = (TTextStuff*)Main->ActiveMDIChild; //grab active mdi child
-//        Active->Messages->Height = 7;
-//    }
-
-//    AssemblerBox->lblStatus->Caption = IntToStr(warningCount);
-//    AssemblerBox->lblStatus2->Caption = IntToStr(errorCount);
-
-//    if(errorCount == 0 && errorCount == 0)
-//    {
-//      AssemblerBox->cmdExecute->Enabled = true;
-//    }
   }
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'assembleFile'. \n");
     printError(NULL, EXCEPTION, 0);
-    return 0; // RA
+    return 0;
   }
 
   return NORMAL;
@@ -289,7 +262,7 @@ int strcap(char *d, char *s)
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'strcap'. \n");
     printError(NULL, EXCEPTION, 0);
-    return 0; // RA
+    return 0;
   }
 
   return NORMAL;
@@ -353,7 +326,6 @@ int processFile()
       skipCond = false;             // true conditionally skips lines in code
       while(!endFlag && fgets(line, 256, inFile)) {
 
-        // RA - not sure I still need this.
         // Handle MSDOS/Win line endings by chomping the CR in the CRLF.
         REMOVECR(line); 
 
@@ -385,7 +357,7 @@ int processFile()
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'processFile'. \n");
     printError(NULL, EXCEPTION, 0);
-    return 0; // RA
+    return 0;
   }
 
   return NORMAL;
@@ -406,15 +378,14 @@ int assemble(char *line, int *errorPtr)
     if (pass2 && listFlag)
       listLoc();
 
-    // RA don't to_upper if we see INCLUDE or INCBIN
+    // Don't to_upper if we see INCLUDE or INCBIN
     if ( NULL==strcasestr(line, "INCLUDE") && NULL==strcasestr(line, "INCBIN"))
        strcap(capLine, line);
     else
        {
-        //fprintf(listFile,"found INCLUDE or INCLUDEBIN, copying line to: %s :::\n",line); // RA debug
         strncpy(capLine, line, 255);
 
-        // MD Check for Windows backslash and replace with forward slash
+        // Check for Windows backslash and replace with forward slash
         for (int i = 0; capLine[i] != '\0'; i++) {
           if (capLine[i] == '\\') capLine[i] = '/';
         }
@@ -422,7 +393,7 @@ int assemble(char *line, int *errorPtr)
      }
 
     p = skipSpace(capLine);               // skip leading white space
-    tokenize(capLine, (char *)", \t\n\r", token, tokens); // RA // tokenize line
+    tokenize(capLine, (char *)", \t\n\r", token, tokens); // tokenize line
 
     if (*p == '*' || *p == ';')         // if comment
       comment = true;
@@ -438,8 +409,6 @@ int assemble(char *line, int *errorPtr)
 
     // conditional assembly for all code
 
-    // DEBUG // 	fprintf(listFile,"tokens 0 1 2 3  :::(%s):: :::(%s)::: :::(%s)::: :::(%s):::\n",token[0], token[1], token[2], token[3]); //RA debug
-   
     // ----- IFC -----
     if(!(stricmp(token[1], "IFC"))) {       // if IFC opcode
       if (token[0] != empty)                // if label present
@@ -621,7 +590,7 @@ int assemble(char *line, int *errorPtr)
   catch( ... ) {
     NEWERROR(*errorPtr, EXCEPTION);
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'assemble'. \n");
-    return 0; // RA
+    return 0;
   }
 
   return NORMAL;
@@ -899,7 +868,6 @@ int tokenize(char* instr, char* delim, char *token[], char* tokens){
     while (*instr && tokN < MAXT && size < MAX_SIZE) { // while tokens remain
       parenCount = 0;
       token[tokN] = &tokens[size];              // pointer to token
-      //while (*instr && strchr(delim, *instr))   // skip leading delimiters
       while(*instr && isspace(*instr))              // skip leading spaces
         instr++;
       if (*instr == '\'' && *(instr+1) == '\'') { // if argument starts with '' (NULL)
@@ -930,7 +898,7 @@ int tokenize(char* instr, char* delim, char *token[], char* tokens){
       tokCount++;                               // count tokens
       tokN++;                                   // next token index
       //while (*instr && strchr(delim, *instr))       // skip trailing delimiters
-      while (*instr && isspace(*instr))         // skip trailing spaces *ck 12-10-2005
+      while (*instr && isspace(*instr))         // skip trailing spaces
         instr++;
     }
   }
@@ -981,10 +949,6 @@ int main(int argc, char *argv[])
 
   for (i=1; i<argc; i++)
   {
-          //printf("arg[%d]=\"%s\"\n",i,argv[i]);
-          // use path of selected source file as temp working directory
-          //SetCurrentDir(ExtractFilePath(Active->Project.CurrentFile));
-
           if (strncmp(argv[i],"--list",32)==0)                {listFlag = true; continue;}
           if (strncmp(argv[i],"--object",32 )==0)             {objFlag  = true;  continue;}
           if (strncmp(argv[i],"--expandconstants",32 )==0)    {CEXflag  = true;  continue;}
@@ -1011,15 +975,15 @@ int main(int argc, char *argv[])
           s=assembleFile((char *)sourceFile.c_str(), (char *)tempFile.c_str(), (char *)sourceFile.c_str());
           unlink(tempFile.c_str());
 
-          if (s==SEVERE) exit(1); // RA - returns NULL, corrected to SEVERE on failure as some return status 0 for NORMAL!
-          if (s!=0) exit(1);  // MD tweaked this
+          if (s==SEVERE) exit(1); // returns NULL, corrected to SEVERE on failure as some return status 0 for NORMAL!
+          if (s!=0) exit(1);
 
   }
-  // MD return non-zero if there were errors or warnings
+  // return non-zero if there were errors or warnings
   if ((errorCount!=0) || (warningCount!=0)) {
     fprintf(stderr,"%d Error(s) and %d Warning(s)\n",errorCount,warningCount);
     return 1;
   }
-  return 0;     // MD return zero on success - keeps MAKE happy
+  return 0;
 }
 #endif

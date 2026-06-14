@@ -685,15 +685,12 @@ int immedWord(int mask, int size, opDescriptor *source, opDescriptor *dest,
 int dbcc(int mask, int size, opDescriptor *source, opDescriptor *dest,
          int *errorPtr)
 {
-  //ck short disp;
   int disp;
 
-  //ck disp = (short int) (dest->data - loc - 2);
   disp = dest->data - loc - 2;
   if (pass2) {
     output((int) (mask | source->reg), WORD_SIZE);
     loc += 2;
-    //ck output((int) (disp), WORD_SIZE);
     output(disp, WORD_SIZE);
     loc += 2;
     if (disp < -32768 || disp > 32767)

@@ -68,12 +68,6 @@ through a pointer in the flavor list for that flavor.
 #define Control	(AnInd | AnIndDisp | AnIndIndex | AbsShort | AbsLong | PCDisp \
 		 | PCIndex)
 
-//Was in both MOVEM.CPP and INSTABL.CPP, moved to asm.h RA
-//#define ControlAlt (AnInd | AnIndDisp | AnIndIndex | AbsShort | AbsLong )
-
-/*#define Alter	(DnDirect | AnDirect | AnInd | AnIndPost | AnIndPre \
-		 | AnIndDisp | AnIndIndex | AbsShort | AbsLong)
-*/
 #define Alter	(DnDirect | AnInd | AnIndPost | AnIndPre \
 		 | AnIndDisp | AnIndIndex | AbsShort | AbsLong)
 
@@ -477,13 +471,6 @@ flavor moveafl[] = {
 	{ All, AnDirect, WL, move, 0, 0x3000, 0x2000 }
        };
 
-//flavor movecfl[] = {
-//	{ SFCDirect | DFCDirect | USPDirect | VBRDirect,
-//           GenReg, LONG_SIZE, movec, 0, 0x4E7A, 0x4E7A },
-//	{ GenReg, SFCDirect | DFCDirect | USPDirect | VBRDirect,
-//           LONG_SIZE, movec, 0, 0x4E7B, 0x4E7B }
-//       };
-
 flavor movepfl[] = {
 	{ DnDirect, AnIndDisp, WL, movep, 0, 0x0188, 0x01C8 },
 	{ AnIndDisp, DnDirect, WL, movep, 0, 0x0108, 0x0148 },
@@ -494,11 +481,6 @@ flavor movepfl[] = {
 flavor moveqfl[] = {
 	{ IMMEDIATE, DnDirect, LONG_SIZE, moveq, 0, 0x7000, 0x7000 }
        };
-
-//flavor movesfl[] = {
-//	{ GenReg, MemAlt, BWL, moves, 0x0E00, 0x0E40, 0x0E80 },
-//	{ MemAlt, GenReg, BWL, moves, 0x0E00, 0x0E40, 0x0E80 }
-//       };
 
 flavor mulsfl[] = {
 	{ Data, DnDirect, WORD_SIZE, arithReg, 0, 0xC1C0, 0 }
@@ -573,10 +555,6 @@ flavor roxrfl[] = {
 	{ DnDirect, DnDirect, BWL, shiftReg, 0xE030, 0xE070, 0xE0B0 },
 	{ IMMEDIATE, DnDirect, BWL, shiftReg, 0xE010, 0xE050, 0xE090 }
        };
-
-//flavor rtdfl[] = {
-//	{ IMMEDIATE, 0, 0, immedWord, 0, 0x4E74, 0 }
-//       };
 
 flavor rtefl[] = {
 	{ 0, 0, 0, zeroOp, 0, 0x4E73, 0 }
@@ -731,7 +709,7 @@ flavor unlkfl[] = {
 /* The instruction table itself... */
 // Instructions MUST BE IN ALPHABETICAL ORDER
 
-instruction instTable[] = { // RA added (char *) to suppress warning: ISO C++ forbids converting a string constant to ‘char*’
+instruction instTable[] = {
 	{ (char *)"ABCD", abcdfl, flavorCount(abcdfl), true, NULL },
 	{ (char *)"ADD", addfl, flavorCount(addfl), true, NULL },
 	{ (char *)"ADDA", addafl, flavorCount(addafl), true, NULL },

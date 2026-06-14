@@ -19,15 +19,10 @@
 /* include system header files for prototype checking */
 #include <stdio.h>
 #include <string.h>
-// include <system.hpp>
-// include <process.h>
 #include <stdlib.h>
-// include <vcl.h>
-//---- added by RA----
 #include <iostream>
 #include <string>
 using std::string;
-// RA
 #ifndef AnsiString
 #define AnsiString string
 #endif
@@ -47,7 +42,7 @@ void REMOVECR(char *line);
 #define isTerm(c)   (c == ',' || c == '/' || c == '-' || isspace(c) || !c || c == '{')
 #define isRegNum(c) ((c >= '0') && (c <= '7'))
 
-//extern const AnsiString VERSION =                     "5.15.04";  // don't forget to change version.txt on easy68k.com
+// don't forget to change version.txt on easy68k.com
 #define VERSION "5.15.04"
 #define TITLE "ASy68K Assembler v5.15.04"
 /* Status values */
@@ -141,20 +136,10 @@ void REMOVECR(char *line);
    new error code is more severe than all previous errors.  Throughout
    ASM this is the standard means of reporting errors. */
 
-//#define NEWERROR(var, code)	if ((code & SEVERITY) > var) var = code
-// ck: the previous line was causing errors when placed inside if-else
 #define NEWERROR(var, code)      var = ((code & SEVERITY) > var) ? code : var
 
 
 /* Symbol table definitions */
-
-//extern #define SIGCHARS; // RA = 33;        // significant characters in symbol
-// RA some of these are better off as defines because they're used as array sizing and
-// if they're not available at compile time, errors are thrown, so they can't be
-// extern consts. (I've been converting most of this file to extern X because of
-// duplicate symbol errors when linking, as this is really ancient code which breaks
-// modern C and C++ rules.) Also I'm guessing that these may have originally been
-// #defines because they're all uppercase.
 
 #define SIGCHARS 33
 #define MAX_ARGS 36       // maximum number of macro arguments
@@ -247,7 +232,6 @@ extern bool noFileName;        // true indicates no name for current source file
 
 
 
-// was  defined in both INSTTABL.CPP and MOVEM.CPP
 #define ControlAlt  (AnInd | AnIndDisp | AnIndIndex | AbsShort | AbsLong)
 
 #define NEW_PAGE_MARKER "<------------------------------ PAGE ------------------------------>"

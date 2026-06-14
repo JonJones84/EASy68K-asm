@@ -61,9 +61,7 @@ extern char numBuf[20];
 
 // Largest number that can be represented in an unsigned int
 //	- MACHINE DEPENDENT
-//ck #define INTLIMIT 0xFFFF
-//ck #define LONGLIMIT 0xFFFFFFFF
-const unsigned int LONGLIMIT = 0xFFFFFFFF;         //ck
+const unsigned int LONGLIMIT = 0xFFFFFFFF;
 
 #define STACKMAX 5
 
@@ -96,10 +94,10 @@ char *eval(char	*p, int *valuePtr, bool *refPtr, int *errorPtr)
       status = OK;
       p = evalNumber(p, &t, &backRef, &status);
       NEWERROR(*errorPtr, status);
-      if (!backRef && status > ERRORN) {        // || status == INCOMPLETE)) {
+      if (!backRef && status > ERRORN) {
         // Stop evaluating the expression
         *refPtr = false;
-        return p;                       // ck 4-16-2002
+        return p;
       }
       else if (*errorPtr > SEVERE)
         // Pass any other error to the caller
@@ -174,8 +172,6 @@ char *eval(char	*p, int *valuePtr, bool *refPtr, int *errorPtr)
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'eval'. \n");
     return NULL;
   }
-
-  //return NORMAL;
 }
 
 //----------------------------------------------------------
@@ -188,7 +184,7 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
   int	base;
   int	x;
   char	name[SIGCHARS+1];
-  symbolDef *symbol;            //ck , *lookup();
+  symbolDef *symbol;
   int	i;
   bool	endFlag;
 
@@ -196,7 +192,7 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
 
   *refPtr = true;
 
-  //ck   * is current address
+  // * is current address
   if (*p == '*') {
     *numberPtr = loc;
     return ++p;
@@ -302,7 +298,7 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
     *numberPtr = x;
     return p;
   }
-  else if (isalpha(*p) || *p == '.' || *p == '_') {  // *ck 12-8-2005
+  else if (isalpha(*p) || *p == '.' || *p == '_') {
     /* Determine the value of a symbol */
     i = 0;
     /* Collect characters of the symbol's name
@@ -311,8 +307,7 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
       if (i < SIGCHARS)
 	name[i++] = *p;
       p++;
-      //} while (isalnum(*p) || *p == '_' || *p == '$' || *p == '.'); // *ck 12-8-2005 so labels may have dots
-    } while (isalnum(*p) || *p == '_' || *p == '$'); // *ck 2-22-2007 operand.L caused error (no dots in labels)
+    } while (isalnum(*p) || *p == '_' || *p == '$');
     name[i] = '\0';
     /* Look up the name in the symbol table, resulting
        in a pointer to the symbol table entry */
@@ -364,8 +359,6 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'evalNumber'. \n");
     return NULL;
   }
-
-  //ck return NORMAL;
 }
 
 
@@ -390,8 +383,6 @@ int precedence(char op)
     case '\\': return 2;
     default  : return 0;
   }
-
-  //ck return NORMAL;
 }
 
 
@@ -407,7 +398,7 @@ int doOp(int val1, int val2, char op, int *result)
     case '-' : *result = val1 - val2;  return OK;
     case '&' : *result = val1 & val2;  return OK;
     case '!' : case '|': *result = val1 | val2;  return OK;
-    case '^' : *result = val1 ^ val2;  return OK;       // ck 12-11-2006
+    case '^' : *result = val1 ^ val2;  return OK;
     case '>' : *result = (unsigned) val1 >> val2; return OK;
     case '<' : *result = val1 << val2; return OK;
     case '*' : *result = val1 * val2;  return OK;

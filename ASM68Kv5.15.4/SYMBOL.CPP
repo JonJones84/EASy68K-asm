@@ -18,8 +18,6 @@
 
 #include <stdio.h>
 #include <ctype.h>
-// include "mainS.h"
-// include "textS.h"
 #include "asm.h"
 
 extern FILE *listFile;
@@ -195,8 +193,6 @@ int optCRE()
     if (s) {
       //last = NULL;
       while (s) {               // while symbols remain in the list
-        //last = s;
-        //fprintf(listFile, "%s\t\t%X\n",s->name, s->value);
         bytes = fprintf(listFile, "%s",s->name);
         // print value in column 20 or 2 spaces after label if label >= 18 chars
         while (bytes++ < 18)
@@ -239,12 +235,11 @@ int hash(char *symbol)
 
 symbolDef *define(char *sym, int value, bool pass2, bool check, int *errorPtr) {
   symbolDef *symbol;
-  bool labelIsGlobal = (*sym != '.');   // local label code CK Sep-23-2009
+  bool labelIsGlobal = (*sym != '.');
 
   symbol = lookup(sym, !pass2, errorPtr);
   if (*errorPtr < ERRORN) {
 
-    // local label code CK Sep-23-2009
     if (labelIsGlobal)
       strncpy(globalLabel, sym, SIGCHARS); // set globalLabel for future use
 
@@ -257,8 +252,8 @@ symbolDef *define(char *sym, int value, bool pass2, bool check, int *errorPtr) {
             NEWERROR(*errorPtr, PHASE_ERROR);
       }
       symbol->flags |= BACKREF;       // mark symbol as defined
-      if (symbol->flags & REDEFINABLE)  // ck 1-10-2008
-        symbol->value = value;          //  "
+      if (symbol->flags & REDEFINABLE)
+        symbol->value = value;
     } else {  // define the symbol
       symbol->value = value;
       symbol->flags = 0;

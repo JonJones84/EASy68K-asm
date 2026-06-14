@@ -14,8 +14,8 @@
 #include "asm.h"
 
 #include <algorithm>
-#include <stack>  // RA removed .h
-#include <vector> // RA removed .h
+#include <stack>
+#include <vector>
 
 extern char line[256];		// Source line
 extern bool listFlag;
@@ -65,13 +65,10 @@ const int LAST_TOKEN = 11;      // highest token possible of structure
 AnsiString stcLabel;
 
 // Make a stack using a vector container
-//stack<int,vector<int> > stcStack;
-// Make a stack for saving dbloop register number
-//stack<char, vector<char> > dbStack;
-// Make a stack for saving FOR arguments
-//stack<String, vector<String> > forStack;
 std::stack<int> stcStack;
+// Make a stack for saving dbloop register number
 std::stack<char> dbStack;
+// Make a stack for saving FOR arguments
 std::stack<string> forStack;
 
 string IntToHex(int x, int width)
@@ -115,7 +112,7 @@ const char* BccCodes[BCC_COUNT][5] = {
 // returns a branch instruction
 // opr is 1 on ea <cc> ea OR, 0 otherwise
 AnsiString getBcc(AnsiString cc, int mode, int opr) {
-  transform(cc.begin(), cc.end(), cc.begin(), ::toupper); // RA
+  transform(cc.begin(), cc.end(), cc.begin(), ::toupper);
   for (int i=0; i<BCC_COUNT; i++) {
     if (cc == BccCodes[i][0])
       return BccCodes[i][mode + opr];
@@ -141,7 +138,6 @@ AnsiString getBcc(AnsiString cc, int mode, int opr) {
 //    .B   <cc>   AND   .B    D0   <cc>   D1   THEN
 //    .B    D0   <cc>   D1    AND   .B    D2   <cc>   D3   THEN
 
-//void outCmpBcc( char *size, char *op1, char *cc, char *op2, char *op3, char *last, AnsiString label, int &error) {
 void outCmpBcc( char *token[], char *last, AnsiString label, int &error) {
 
   AnsiString stcLine, stcCmp, extent;

@@ -52,22 +52,20 @@
 
 /* Define bit masks for the legal addressing modes of MOVEM */
 
-// Moved to asm.h RA
-//#define ControlAlt  (AnInd | AnIndDisp | AnIndIndex | AbsShort | AbsLong)
 #define DestModes   (ControlAlt | AnIndPre)
 #define SourceModes (ControlAlt | AnIndPost | PCDisp | PCIndex)
 
 
 extern int	loc;
 extern bool pass2;
-extern char buffer[256];  //ck used to form messages for display in windows
+extern char buffer[256];  // Used to form messages for display in windows
 extern char numBuf[20];
 
 
 
 int movem(int	size, char *label, char *op, int *errorPtr)
 {
-  char *p;                      //ck , *opParse();
+  char *p;
   int status;
   unsigned short regList, temp, instMask;
   char i;
@@ -194,7 +192,7 @@ int movem(int	size, char *label, char *op, int *errorPtr)
   catch( ... ) {
     NEWERROR(*errorPtr, EXCEPTION);
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'movem'. \n");
-    return SEVERE; // RA NULL
+    return SEVERE;
   }
 
 	return NORMAL;
@@ -232,7 +230,7 @@ int reg(int size, char *label, char *op, int *errorPtr)
   catch( ... ) {
     NEWERROR(*errorPtr, EXCEPTION);
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'reg'. \n");
-    return SEVERE; // RA NULL
+    return SEVERE;
   }
 
 	return NORMAL;
@@ -245,7 +243,7 @@ char *evalList(char *p, unsigned short *listPtr, int *errorPtr)
   unsigned short regList;
   char symName[SIGCHARS+1];
   char i;
-  symbolDef *symbol;                    //ck, *lookup();
+  symbolDef *symbol;
   int status;
 
   try {
@@ -366,7 +364,4 @@ char *evalList(char *p, unsigned short *listPtr, int *errorPtr)
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'evalList'. \n");
     return NULL;
   }
-
-      //ck	return NORMAL;
-
 }

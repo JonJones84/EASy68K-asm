@@ -93,7 +93,6 @@ target system it is the responsibility of the transmitting program to provide th
 ************************************************************************/
 
 
-// include <vcl.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "asm.h"
@@ -104,7 +103,7 @@ target system it is the responsibility of the transmitting program to provide th
 
 extern char line[256];
 extern FILE *objFile;
-extern char buffer[256];  //ck used to form messages for display in windows
+extern char buffer[256];  //Used to form messages for display in windows
 extern char numBuf[20];
 extern unsigned int startAddress;     // starting address of program
 extern bool offsetMode;
@@ -119,7 +118,7 @@ extern bool mapInvalid;
 extern int mapInvalidStart, mapInvalidEnd;
 
 static char sRecord[80], *objPtr;
-static char obyteCount, checksum; // RA also found in BINFILE.CPP, so renamed here since it's static to make it clear they're different
+static char obyteCount, checksum;
 static bool lineFlag;
 static int objAddr;
 static char objErrorMsg[] = "Error writing to object file\n";
@@ -132,8 +131,7 @@ int initObj(char *name)
   objFile = fopen(name, "w");
   if (!objFile) {
     snprintf(buffer, sizeof(buffer), "Unable to create S-Record file");
-    //Application->MessageBox(buffer, "Error", MB_OK);
-      fprintf(stderr,"%s\n",buffer);
+    fprintf(stderr,"%s\n",buffer);
     return MILD_ERROR;
   }
 
@@ -185,14 +183,14 @@ int outputObj(int newAddr, int data, int size)
     // If no S-record is already being assembled, then start making one
     if (!lineFlag) {
       if ((newAddr & 0xFFFF) == newAddr) {
-	snprintf(sRecord, sizeof(sRecord), "S1  %04X", newAddr);
-	obyteCount = 3;
+	      snprintf(sRecord, sizeof(sRecord), "S1  %04X", newAddr);
+	      obyteCount = 3;
       }	else if ((newAddr & 0xFFFFFF) == newAddr) {
-	snprintf(sRecord, sizeof(sRecord), "S2  %06X", (int) newAddr); //RA
-	obyteCount = 4;
+	      snprintf(sRecord, sizeof(sRecord), "S2  %06X", (int) newAddr);
+	      obyteCount = 4;
       }	else {
-	snprintf(sRecord, sizeof(sRecord), "S3  %08X", newAddr); //RA warning: format ‘%lX’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’
-	obyteCount = 5;
+	      snprintf(sRecord, sizeof(sRecord), "S3  %08X", newAddr);
+	      obyteCount = 5;
       }
       objPtr = sRecord + 4 + (obyteCount-1)*2;
       objAddr = newAddr;
@@ -203,23 +201,22 @@ int outputObj(int newAddr, int data, int size)
     switch (size) {
       case BYTE_SIZE :
         data &= 0xFF;
-	snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%02X", data);
-	obyteCount++;
-	break;
+	      snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%02X", data);
+	      obyteCount++;
+	      break;
       case WORD_SIZE :
         data &= 0xFFFF;
-	snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%04X", data);
-	obyteCount += 2;
-	break;
+	      snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%04X", data);
+	      obyteCount += 2;
+	      break;
       case LONG_SIZE :
-        snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%08X", data); // RA
-	obyteCount += 4;
-	break;
+        snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%08X", data);
+	      obyteCount += 4;
+	      break;
       default :
         snprintf(buffer, sizeof(buffer), "outputObj: INVALID SIZE CODE!\n");
-        //Application->MessageBox(buffer, "Error", MB_OK);
-          fprintf(stderr,"%s\n",buffer);
-	return MILD_ERROR;
+        fprintf(stderr,"%s\n",buffer);
+	      return MILD_ERROR;
     }
     objPtr += size*2;
     objAddr += (int) size;
@@ -229,7 +226,7 @@ int outputObj(int newAddr, int data, int size)
     printError(NULL, EXCEPTION, 0);
     return MILD_ERROR;
   }
-    return NORMAL;
+  return NORMAL;
 }
 
 //------------------------------------------------------------
@@ -251,16 +248,14 @@ int writeObj()
       str = "0x";
       str += *sRec++;
       str += *sRec++;
-//      checksum += (char) (StrToInt(str) & 0xFF); //RA
-      checksum += (char) (strtol(str.c_str(), NULL, 0) & 0xFF); //RA
+      checksum += (char) (strtol(str.c_str(), NULL, 0) & 0xFF);
     }
     snprintf(sRec, sizeof(sRecord) - (sRec - sRecord), "%02X\n", (~checksum & 0xFF)); // put checksum in sRecord
 
     // Output the S-record to the object file
     fputs(sRecord, objFile);
     if (ferror(objFile)) {
-      snprintf(buffer, sizeof(buffer), "%s",objErrorMsg); //RA warning: format not a string literal and no format arguments
-      //Application->MessageBox(buffer, "Error", MB_OK);
+      snprintf(buffer, sizeof(buffer), "%s",objErrorMsg);
         fprintf(stderr,"%s\n",buffer);
       return MILD_ERROR;
     }
@@ -282,23 +277,23 @@ int writeObj()
 //   start and end contain addresses
 int writeMap(char* name, int start, int end)
 {
-  char data[7]; //RA was 6 :: warning: ‘sprintf’ writing a terminating nul past the end of the destination
+  char data[7];
 
   try {
     snprintf(sRecord,9, "S0  %04X", 0);
     obyteCount = 3;
     objPtr = sRecord + 4 + (obyteCount-1)*2;
 
-    snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%s", name); // RA
+    snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%s", name);
     objPtr += 20;
     obyteCount += 10;
-    snprintf(data, 7, "%06X", start & 0x00ffffff); // RA GCC will complain about truncation here even though it shouldn't :(
-    for (int i=0; i<6; i++) {                     // ^ also warning: ‘sprintf’ writing a terminating nul past the end of the destination
+    snprintf(data, 7, "%06X", start & 0x00ffffff);
+    for (int i=0; i<6; i++) {
       snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%02X", data[i]);
       objPtr += 2;
     }
     obyteCount += 6;
-    snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "2C");                    // ","
+    snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "2C");
     objPtr += 2;
     obyteCount += 1;
     snprintf(data, 7, "%06X", end & 0x00ffffff);
@@ -329,7 +324,7 @@ int finishObj()
     // Write S0 records for memory map
     if (mapROM) {
       //                     R O M
-      writeMap( (char *)"202020202020524F4D20", mapROMStart, mapROMEnd); // RA
+      writeMap( (char *)"202020202020524F4D20", mapROMStart, mapROMEnd);
     }
     if (mapRead) {
       //                   R E A D
@@ -353,8 +348,7 @@ int finishObj()
     writeObj();
 
     if (ferror(objFile)) {
-      snprintf(buffer, sizeof(buffer), "%s", objErrorMsg); // RA warning: format not a string literal and no format arguments
-      //Application->MessageBox(buffer, "Error", MB_OK);
+      snprintf(buffer, sizeof(buffer), "%s", objErrorMsg);
         fprintf(stderr,"%s\n",buffer);
       return MILD_ERROR;
     }

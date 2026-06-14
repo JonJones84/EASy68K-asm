@@ -56,12 +56,8 @@
  ************************************************************************/
 
 
-// include <vcl.h>
 #include <stdio.h>
 #include <ctype.h>
-// include "editorOptions.h"
-// #include "texts.h"
-// include "mainS.h"
 #include "asm.h"
 
 /* Declarations of global variables */
@@ -73,7 +69,6 @@ extern FILE *listFile;
 extern int lineNum;
 extern int lineNumL68;
 
-//static
 char listData[LIST_DATA_BUFFER_SIZE];      /* Buffer in which listing lines are assembled */
 
 extern char *listPtr;	       /* Pointer to above buffer (this pointer is
@@ -82,7 +77,7 @@ extern char *listPtr;	       /* Pointer to above buffer (this pointer is
 				  information in the listing) */
 
 extern int errorCount, warningCount;	/* Number of errors and warnings */
-extern char buffer[256];  //ck used to form messages for display in windows
+extern char buffer[256];  //Used to form messages for display in windows
 extern char numBuf[20];
 extern unsigned int startAddress;     // starting address of program
 
@@ -97,14 +92,12 @@ int initList(char *name)
     listFile = fopen(name, "w");
     if (!listFile) {
       snprintf(buffer, sizeof(buffer),"Unable to create listing file");
-      //Application->MessageBox(buffer, "Error", MB_OK);
         fprintf(stderr,"%s\n",buffer);
       return MILD_ERROR;
     }
     if (!listPtr) listPtr=listData;
 
-    //  TDateTime DateTime = Time();  // store the current date and time
-    // RA vvv added OS agnostic #ifdefs, On Windows it's like this: 'Created On: 4/29/2019 8:47:37 PM'
+    // Added OS agnostic #ifdefs, On Windows it's like this: 'Created On: 4/29/2019 8:47:37 PM'
     #if (defined(_WIN32) || defined(__WIN64__) ) && !defined(__CYGWIN__)
       AnsiString timeStr = DateTimeToStr(Now()); // date & time to a string
     #else
@@ -132,20 +125,17 @@ int initList(char *name)
   }
 }
 
-int listLine(char text[], char lineIdent[])   // ck 4-2006 lineIdent[]
+int listLine(char text[], char lineIdent[])
 {
-  // FixedTabSize->Value
   try {
     if (!createdL68)
       return NORMAL;
-//RA//    TTextStuff *Active = (TTextStuff*)Main->ActiveMDIChild; //grab active mdi child
     fprintf(listFile, "%-32.32s", listData);
     if (!continuation) {
       // replace tab with spaces
       int i=0, j=0, k, t;
       while (text[i] && j < 255-8) {
 	if (text[i] == '\t') {          // if tab
-//RA//          if (Active->Project.TabType == Assembly) {
           if (true) {
             if (j <= TAB1)
               t = TAB1 - j;
@@ -153,9 +143,7 @@ int listLine(char text[], char lineIdent[])   // ck 4-2006 lineIdent[]
               t = TAB2 - j;
             else
               t = TAB3 - j;
-          } //else {                      // else fixed tabs
-            //t = Active->Project.TabSize - (j % Active->Project.TabSize);
-            //}
+          }
           for (k=0; k<t; k++)       // replace with spaces
 	    buffer[j++] = ' ';
         } else
@@ -175,7 +163,6 @@ int listLine(char text[], char lineIdent[])   // ck 4-2006 lineIdent[]
 
     if (ferror(listFile)) {
       snprintf(buffer, sizeof(buffer),"Error writing to listing file\n");
-      //Application->MessageBox(buffer, "Error", MB_OK);
         fprintf(stderr,"%s\n",buffer);
       return MILD_ERROR;
     }
@@ -196,9 +183,9 @@ int listLoc()
   if (!listPtr) listPtr=listData; // prevent crash RA
 
   if (offsetMode || showEqual)
-    snprintf(listData, sizeof(listData), "%08X= ", loc); //RA warning: format ‘%lX’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’
+    snprintf(listData, sizeof(listData), "%08X= ", loc);
   else
-    snprintf(listData, sizeof(listData), "%08X  ", loc); // RA
+    snprintf(listData, sizeof(listData), "%08X  ", loc);
   listPtr = listData + 10;
 
   return NORMAL;
@@ -208,7 +195,7 @@ int listLoc()
 // when skipCond is True the conditional test was False
 int listCond(bool cond)
 {
-  if (!listPtr) listPtr=listData; // prevent crash RA
+  if (!listPtr) listPtr=listData;
   if (cond)
     snprintf(listPtr, sizeof(listData) - (listPtr - listData),"               %s ","FALSE");
   else
@@ -224,8 +211,8 @@ int listError(char *lineNum, char *errMsg)
 {
   if (!createdL68)
     return NORMAL;
-  fprintf(listFile, "%s", lineNum);         // write line number to file // RA warning: format not a string literal and no format arguments [-Wformat-security]
-  fprintf(listFile, "%s", errMsg);          // write error message to file // RA
+  fprintf(listFile, "%s", lineNum);         // write line number to file
+  fprintf(listFile, "%s", errMsg);          // write error message to file
   return NORMAL;
 }
 
@@ -234,7 +221,7 @@ int listText(const char *text)
 {
   if (!createdL68)
     return NORMAL;
-  fprintf(listFile, "%s", text);           // write text to file // RA warning: format not a string literal and no format arguments [-Wformat-security]
+  fprintf(listFile, "%s", text);           // write text to file
   return NORMAL;
 }
 
@@ -251,17 +238,16 @@ int listObj(int data, int size)
     continuation = true;
   }
   switch (size) {
-    case BYTE_SIZE: snprintf(listPtr, sizeof(listData) - (listPtr - listData), "%02X ", (unsigned int)(data & 0xFF)); // RA
+    case BYTE_SIZE: snprintf(listPtr, sizeof(listData) - (listPtr - listData), "%02X ", (unsigned int)(data & 0xFF));
       listPtr += 3;
       break;
-    case WORD_SIZE: snprintf(listPtr, sizeof(listData) - (listPtr - listData), "%04X ", (unsigned int)(data & 0xFFFF)); // RA
+    case WORD_SIZE: snprintf(listPtr, sizeof(listData) - (listPtr - listData), "%04X ", (unsigned int)(data & 0xFFFF));
       listPtr += 5;
       break;
-    case LONG_SIZE: snprintf(listPtr, sizeof(listData) - (listPtr - listData), "%08X ", data); // RA
+    case LONG_SIZE: snprintf(listPtr, sizeof(listData) - (listPtr - listData), "%08X ", data);
       listPtr += 9;
       break;
     default: snprintf(buffer, sizeof(buffer),"LISTOBJ: INVALID SIZE CODE!\n");
-      //Application->MessageBox(buffer, "Error", MB_OK);
         fprintf(stderr,"%s\n",buffer);
       return MILD_ERROR;
   }

@@ -144,9 +144,7 @@ char	*skipSpace(char *);
 
 int	setFlags(int, char *[], int *);
 
-//int	getopt(int, char *[], char *, int *);
-
-void help(void); // RA
+void help(void);
 
 int	movem(int, char *, char *, int *);
 
@@ -154,15 +152,15 @@ int	reg(int, char *, char *, int *);
 
 int	opt(int, char *, char *, int *);
 
-int     macro(int, char *, char *, int *);      //ck
+int     macro(int, char *, char *, int *);
 
-int     asmMacro(int, char *, char *, int *);   //ck
+int     asmMacro(int, char *, char *, int *);
 
-int     asmStructure(int, char *, char *, int *);  //ck
+int     asmStructure(int, char *, char *, int *);
 
-int     tokenize(char* , char*, char*[], char*);  //ck
+int     tokenize(char* , char*, char*[], char*);
 
-int     optCRE();                               //ck
+int     optCRE();
 
 char	*evalList(char *, unsigned short *, int *);
 

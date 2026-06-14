@@ -48,12 +48,12 @@
 extern instruction instTable[];
 extern int tableSize;
 extern int macroFP;            // location of macro in input file
-extern char buffer[256];  //ck used to form messages for display in windows
+extern char buffer[256];  // Used to form messages for display
 extern char numBuf[20];
 extern bool BITflag;
 extern bool pass2;
 
-instruction asmMac = { (char *)"ASMMACRO", NULL, 0, false, asmMacro }; // RA suppress INSTLOOK.CPP:56:61: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+instruction asmMac = { (char *)"ASMMACRO", NULL, 0, false, asmMacro };
 
 char *instLookup(char *p, instruction *(*instPtrPtr), char *sizePtr, int *errorPtr)
 {
@@ -62,7 +62,6 @@ char *instLookup(char *p, instruction *(*instPtrPtr), char *sizePtr, int *errorP
   symbolDef *symbol;
 
   try {
-    /*	printf("InstLookup: Input string is \"%s\"\n", p); */
     i = 0;
     do {
       if (i < SIGCHARS)
@@ -74,7 +73,7 @@ char *instLookup(char *p, instruction *(*instPtrPtr), char *sizePtr, int *errorP
       if (isspace(p[2]) || !p[2]) {
         if (p[1] == 'B')
           *sizePtr = BYTE_SIZE;
-        else if (p[1] == 'W' || isspace(p[1]))  // *ck 12-8-2005
+        else if (p[1] == 'W' || isspace(p[1]))
           *sizePtr = WORD_SIZE;
         else if (p[1] == 'L')
           *sizePtr = LONG_SIZE;
@@ -144,5 +143,4 @@ char *instLookup(char *p, instruction *(*instPtrPtr), char *sizePtr, int *errorP
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'instLookup'. \n");
     return NULL;
   }
-  //return NORMAL;
 }
