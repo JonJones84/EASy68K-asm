@@ -77,8 +77,9 @@ int move(int mask, int size,
   moveMask = mask | effAddr(source);
   destCode = (char) (effAddr(dest) & 0xff);
   moveMask |= ((destCode & 0x38) << 3) | ((destCode & 7) << 9);
-  if (pass2)
+  if (pass2) {
     output((int) (moveMask), WORD_SIZE);
+  }
   loc += 2;
   extWords(source, size, errorPtr);
   extWords(dest, size, errorPtr);
@@ -103,8 +104,9 @@ int move(int mask, int size,
 int zeroOp(int mask, int size,
                 opDescriptor *source, opDescriptor *dest, int *errorPtr)
 {
-  if (pass2)
+  if (pass2) {
     output((int) (mask), WORD_SIZE);
+  }
   loc += 2;
 
   return NORMAL;
@@ -137,8 +139,9 @@ int	oneOp(int mask, int size,
                 opDescriptor *source, opDescriptor *dest,
                 int *errorPtr)
 {
-  if (pass2)
+  if (pass2) {
     output((int) (mask | effAddr(source)), WORD_SIZE);
+  }
   loc += 2;
   extWords(source, size, errorPtr);
 
@@ -182,12 +185,15 @@ int	arithReg(int mask, int size,
         && source->size == 0)                   // not forced Long with #n.L
     if (type == 0xD000) {       // if ADDA
       // Assemble as ADDQ
-      if (size == LONG_SIZE)
+      if (size == LONG_SIZE) {
         quickMath(0x5080, size, source, dest, errorPtr);
-      else
+      }
+      else {
         quickMath(0x5040, size, source, dest, errorPtr);
+      }
       return NORMAL;
-    } else {
+    }
+    else {
       // Assemble as SUBQ
       if (size == LONG_SIZE)
         quickMath(0x5180, size, source, dest, errorPtr);
@@ -196,8 +202,9 @@ int	arithReg(int mask, int size,
       return NORMAL;
     }
   // Otherwise assemble as an ordinary instruction
-  if (pass2)
+  if (pass2) {
     output((int) (mask | effAddr(source) | (dest->reg << 9)), WORD_SIZE);
+  }
   loc += 2;
   extWords(source, size, errorPtr);
 
@@ -225,8 +232,9 @@ int	arithAddr(int mask, int size,
                   opDescriptor *source, opDescriptor *dest,
                   int *errorPtr)
 {
-  if (pass2)
+  if (pass2) {
     output((int) (mask | effAddr(dest) | (source->reg << 9)), WORD_SIZE);
+  }
   loc += 2;
   extWords(dest, size, errorPtr);
 
@@ -256,29 +264,35 @@ int	bitField(int mask, int size,
 {
   unsigned short type;
 
-  if (pass2)
-  {
+  if (pass2) {
     type = mask & 0x0700;
-    if (type == BFINS)
+    if (type == BFINS) {
       output((int) (mask | effAddr(dest)), WORD_SIZE);
-    else
+    }
+    else {
       output((int) (mask | effAddr(source)), WORD_SIZE);
+    }
     loc += 2;
 
     if (type == BFEXTS || type == BFEXTU || type == BFFFO)
-      source->field |= dest->reg << 12; // put Dn reg number in field
+      source->field |= dest->reg << 12; // put Dn reg number in field}
     if (type == BFINS) {                // if bfins Dn,<ea>{offset:width}
       dest->field |= source->reg << 12; // put Dn reg number in field
       output(dest->field, WORD_SIZE);   // field is in destination
-    } else
+    } else {
       output(source->field, WORD_SIZE); // field is in source
+    }
     loc += 2;
-  } else
+  } else {
     loc += 4;
-  if (type == BFINS)                    // if bfins Dn,<ea>{offset:width}
+  }
+  if (type == BFINS) {
+    // if bfins Dn,<ea>{offset:width}
     extWords(dest, size, errorPtr);     // output extension word for dest
-  else
+  }
+  else {
     extWords(source, size, errorPtr);   // output extension word for source
+  }
 
   return NORMAL;
 }
@@ -370,8 +384,8 @@ int movep(int mask, int size,
       // Convert plain address register indirect to address
       //   register indirect with displacement of 0
       if (dest->mode == AnInd) {
-	dest->mode = AnIndDisp;
-	dest->data = 0;
+	      dest->mode = AnIndDisp;
+	      dest->data = 0;
       }
       output((int) (mask | (source->reg << 9) | (dest->reg)), WORD_SIZE);
       loc += 2;
@@ -380,16 +394,17 @@ int movep(int mask, int size,
       // Convert plain address register indirect to address
       //   register indirect with displacement of 0
       if (source->mode == AnInd) {
-	source->mode = AnIndDisp;
-	source->data = 0;
+	      source->mode = AnIndDisp;
+	      source->data = 0;
       }
       output((int) (mask | (dest->reg << 9) | (source->reg)), WORD_SIZE);
       loc += 2;
       extWords(source, size, errorPtr);
     }
 
-  else
+  else {
     loc += 4;
+  }
 
   return NORMAL;
 }
@@ -406,27 +421,32 @@ int moves(int mask, int size,
               opDescriptor *source, opDescriptor *dest,
               int *errorPtr)
 {
-  if (pass2)
+  if (pass2) {
     if (source->mode & (DnDirect | AnDirect)) {
       output((int) (mask | effAddr(dest)), WORD_SIZE);
       loc += 2;
-      if (source->mode == DnDirect)
-	output((int) (0x0800 | (source->reg << 12)), WORD_SIZE);
-      else
-	output((int) (0x8800 | (source->reg << 12)), WORD_SIZE);
+      if (source->mode == DnDirect) {
+        output((int) (0x0800 | (source->reg << 12)), WORD_SIZE);
+      }
+      else {
+        output((int) (0x8800 | (source->reg << 12)), WORD_SIZE);
+      }
       loc += 2;
     } else {
       output((int) mask | effAddr(source), WORD_SIZE);
       loc += 2;
-      if (dest->mode == DnDirect)
-	output((int) (dest->reg << 12), WORD_SIZE);
-      else
-	output((int) (0x8000 | (dest->reg << 12)), WORD_SIZE);
+      if (dest->mode == DnDirect) {
+        output((int) (dest->reg << 12), WORD_SIZE);
+      }
+      else {
+        output((int) (0x8000 | (dest->reg << 12)), WORD_SIZE);
+      }
       loc += 2;
     }
-
-  else
+  }
+  else {
     loc += 4;
+  }
   extWords((source->mode & (DnDirect | AnDirect)) ? dest : source,
 	     size, errorPtr);
 
@@ -446,8 +466,9 @@ int moves(int mask, int size,
 int moveReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
             int *errorPtr)
 {
-  if (pass2)
+  if (pass2) {
     output((int) (mask | effAddr(dest)), WORD_SIZE);
+  }
   loc += 2;
   extWords(dest, size, errorPtr);
 
@@ -475,8 +496,9 @@ int staticBit(int mask, int size, opDescriptor *source, opDescriptor *dest,
     output(source->data & 0xFF, WORD_SIZE);
     loc += 2;
   }
-  else
+  else {
     loc += 4;
+  }
   extWords(dest, size, errorPtr);
 
   return NORMAL;
@@ -576,18 +598,19 @@ int branch(int mask, int size, opDescriptor *source, opDescriptor *dest,
       output((int) (mask | (disp & 0xFF)), WORD_SIZE);
       loc += 2;
       if (disp < -128 || disp > 127 || !disp)
-	NEWERROR(*errorPtr, INV_BRANCH_DISP);
+	    NEWERROR(*errorPtr, INV_BRANCH_DISP);
     } else {
       output((int) (mask), WORD_SIZE);
       loc += 2;
       output((int) (disp), WORD_SIZE);
       loc += 2;
       if (disp < -32768 || disp > 32767)
-	NEWERROR(*errorPtr, INV_BRANCH_DISP);
+	      NEWERROR(*errorPtr, INV_BRANCH_DISP);
     }
   }
-  else
+  else {
     loc += (shortDisp) ? 2 : 4;
+  }
 
   return NORMAL;
 }
@@ -748,10 +771,11 @@ int shiftReg(int mask, int size, opDescriptor *source, opDescriptor *dest,
     if (source->mode == IMMEDIATE) {
       mask |= (source->data & 7) << 9;
       if (source->data < 1 || source->data > 8)
-	NEWERROR(*errorPtr, INV_SHIFT_COUNT);
+	      NEWERROR(*errorPtr, INV_SHIFT_COUNT);
     }
-    else
+    else {
       mask |= source->reg << 9;
+    }
     output((int) (mask), WORD_SIZE);
   }
   loc += 2;
@@ -774,14 +798,17 @@ int exg(int mask, int size, opDescriptor *source, opDescriptor *dest,
     // Are a data register and an address register being exchanged?
     if (source->mode != dest->mode)
       // If so, the address register goes in bottom three bits
-      if (source->mode == AnDirect)
-	mask |= source->reg | (dest->reg << 9);
-      else
-	mask |= dest->reg | (source->reg << 9);
-      else
-	// Otherwise it doesn't matter which way they go
-	mask |= dest->reg | (source->reg << 9);
-      output((int) (mask), WORD_SIZE);
+      if (source->mode == AnDirect) {
+        mask |= source->reg | (dest->reg << 9);
+      }
+      else {
+        mask |= dest->reg | (source->reg << 9);
+      }
+      else {
+        // Otherwise it doesn't matter which way they go
+        mask |= dest->reg | (source->reg << 9);
+        output((int) (mask), WORD_SIZE);
+      }
    }
    loc += 2;
 
@@ -876,8 +903,9 @@ int link(int mask, int size, opDescriptor *source, opDescriptor *dest,
     if (dest->data < -32768 || dest->data > 32767)
       NEWERROR(*errorPtr, INV_16_BIT_DATA);
   }
-  else
+  else {
     loc += 4;
+  }
 
   return NORMAL;
 }

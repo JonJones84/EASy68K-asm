@@ -92,7 +92,7 @@ int initList(char *name)
     listFile = fopen(name, "w");
     if (!listFile) {
       snprintf(buffer, sizeof(buffer),"Unable to create listing file");
-        fprintf(stderr,"%s\n",buffer);
+      fprintf(stderr,"%s\n",buffer);
       return MILD_ERROR;
     }
     if (!listPtr) listPtr=listData;
@@ -135,7 +135,7 @@ int listLine(char text[], char lineIdent[])
       // replace tab with spaces
       int i=0, j=0, k, t;
       while (text[i] && j < 255-8) {
-	if (text[i] == '\t') {          // if tab
+	      if (text[i] == '\t') {          // if tab
           if (true) {
             if (j <= TAB1)
               t = TAB1 - j;
@@ -145,7 +145,7 @@ int listLine(char text[], char lineIdent[])
               t = TAB3 - j;
           }
           for (k=0; k<t; k++)       // replace with spaces
-	    buffer[j++] = ' ';
+	          buffer[j++] = ' ';
         } else
           buffer[j++] = text[i];        // else, copy character
         i++;
@@ -180,7 +180,8 @@ int listLine(char text[], char lineIdent[])
 
 int listLoc()
 {
-  if (!listPtr) listPtr=listData; // prevent crash RA
+  if (!listPtr)
+      listPtr=listData;
 
   if (offsetMode || showEqual)
     snprintf(listData, sizeof(listData), "%08X= ", loc);
@@ -195,7 +196,9 @@ int listLoc()
 // when skipCond is True the conditional test was False
 int listCond(bool cond)
 {
-  if (!listPtr) listPtr=listData;
+  if (!listPtr)
+    listPtr=listData;
+
   if (cond)
     snprintf(listPtr, sizeof(listData) - (listPtr - listData),"               %s ","FALSE");
   else

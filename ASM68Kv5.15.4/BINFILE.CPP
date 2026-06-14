@@ -57,7 +57,7 @@ int initBin(char *name)
   binFile = fopen(name, "wb");  // create binary file
   if (!binFile) {
     snprintf(buffer, sizeof(buffer),"Unable to create binary file!");
-      fprintf(stderr,"%s\n",buffer);
+    fprintf(stderr,"%s\n",buffer);
     return MILD_ERROR;
   }
 
@@ -74,51 +74,50 @@ int initBin(char *name)
 int outputBin(int newAddr, int data, int size)
 {
   try {
-  if (offsetMode)       // don't write data if processing Offset directive
-    return NORMAL;
+    if (offsetMode)       // don't write data if processing Offset directive
+      return NORMAL;
 
-  // init starting address of new file
-  if (newFile)
-  {
-    binAddr = newAddr;
-    newFile = false;
-    sectionCount++;                 // count sections
-    writeBigEndian(newAddr, LONG_SIZE);  // write new address to file
-    byteCountFP = ftell(binFile);   // save file position of byteCount
-    writeBigEndian(0, LONG_SIZE);        // save room for byte count (update later)
-    fileSize += 8;                      // keep track of file size
-  }
+    // init starting address of new file
+    if (newFile)
+    {
+      binAddr = newAddr;
+      newFile = false;
+      sectionCount++;                 // count sections
+      writeBigEndian(newAddr, LONG_SIZE);  // write new address to file
+      byteCountFP = ftell(binFile);   // save file position of byteCount
+      writeBigEndian(0, LONG_SIZE);        // save room for byte count (update later)
+      fileSize += 8;                      // keep track of file size
+    }
 
-  // If the new address doesn't follow the previous data's address
-  if (newAddr != binAddr) {
-    currentFP = ftell(binFile);          // save current file position
-    // position file at previous sections byte count
-    fseek(binFile, byteCountFP, SEEK_SET);
-    writeBigEndian(byteCount, LONG_SIZE);     // write previous sections byte count
-    fseek(binFile, currentFP, SEEK_SET); // return file to current position
-    byteCount = 0;                       // clear byte count for new section
+    // If the new address doesn't follow the previous data's address
+    if (newAddr != binAddr) {
+      currentFP = ftell(binFile);          // save current file position
+      // position file at previous sections byte count
+      fseek(binFile, byteCountFP, SEEK_SET);
+      writeBigEndian(byteCount, LONG_SIZE);     // write previous sections byte count
+      fseek(binFile, currentFP, SEEK_SET); // return file to current position
+      byteCount = 0;                       // clear byte count for new section
 
-    sectionCount++;                 // count sections
-    writeBigEndian(newAddr, LONG_SIZE);  // write new address to file
-    byteCountFP = ftell(binFile);   // save file position of byteCount
-    writeBigEndian(0, LONG_SIZE);        // save room for byte count (update later)
-    binAddr = newAddr;
-    fileSize += 8;                      // keep track of file size
-  }
+      sectionCount++;                 // count sections
+      writeBigEndian(newAddr, LONG_SIZE);  // write new address to file
+      byteCountFP = ftell(binFile);   // save file position of byteCount
+      writeBigEndian(0, LONG_SIZE);        // save room for byte count (update later)
+      binAddr = newAddr;
+      fileSize += 8;                      // keep track of file size
+    }
 
-  // if writing WORD_SIZE or LONG_SIZE data to odd address
-  if ((size != BYTE_SIZE) && (binAddr % 2)) {
-    writeBigEndian(0, BYTE_SIZE);            // pad with byte of 0
-    byteCount++;                        // count the byte
-    binAddr++;                          // next address
-    fileSize += 1;                      // keep track of file size
-  }
+    // if writing WORD_SIZE or LONG_SIZE data to odd address
+    if ((size != BYTE_SIZE) && (binAddr % 2)) {
+      writeBigEndian(0, BYTE_SIZE);            // pad with byte of 0
+      byteCount++;                        // count the byte
+      binAddr++;                          // next address
+      fileSize += 1;                      // keep track of file size
+    }
 
-  writeBigEndian(data, size);           // write the data to the file
-  byteCount += (int) size;             // count the bytes
-  binAddr += (int) size;               // next address
-  fileSize += size;                     // keep track of file size
-
+    writeBigEndian(data, size);           // write the data to the file
+    byteCount += (int) size;             // count the bytes
+    binAddr += (int) size;               // next address
+    fileSize += size;                     // keep track of file size
   }
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'outputBin'. \n");
@@ -131,19 +130,19 @@ int outputBin(int newAddr, int data, int size)
 int finishBin()
 {
   try {
-  // make sure file contains an even number of bytes
-  if (fileSize % 2)                     // if odd size
-    writeBigEndian(0, 1);               // write an extra byte of 0
+    // make sure file contains an even number of bytes
+    if (fileSize % 2)                     // if odd size
+      writeBigEndian(0, 1);               // write an extra byte of 0
 
-  currentFP = ftell(binFile);          // save current file position
-  // position file at previous sections byte count
-  fseek(binFile, byteCountFP, SEEK_SET);
-  writeBigEndian(byteCount, LONG_SIZE);     // write previous sections byte count
+    currentFP = ftell(binFile);          // save current file position
+    // position file at previous sections byte count
+    fseek(binFile, byteCountFP, SEEK_SET);
+    writeBigEndian(byteCount, LONG_SIZE);     // write previous sections byte count
 
-  rewind(binFile);                      // rewind to start of file
+    rewind(binFile);                      // rewind to start of file
 
-  // close the file
-  fclose(binFile);
+    // close the file
+    fclose(binFile);
   }
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'finishBin'. \n");
@@ -161,19 +160,17 @@ void writeBigEndian(int data, int size)
   unsigned char dataByte;
 
   try {
-  // if writing WORD_SIZE or LONG_SIZE data to odd address
-  if ((size != BYTE_SIZE) && (ftell(binFile) % 2))
-  {
-    dataByte = 0;
-    fwrite(&dataByte, 1, 1, binFile);   // pad with byte of 0
-  }
+    // if writing WORD_SIZE or LONG_SIZE data to odd address
+    if ((size != BYTE_SIZE) && (ftell(binFile) % 2)) {
+      dataByte = 0;
+      fwrite(&dataByte, 1, 1, binFile);   // pad with byte of 0
+    }
 
-  // write data to file
-  for (int i=size-1; i>=0; i--)
-  {
-    dataByte = data >> 8*i;
-    fwrite(&dataByte, 1, 1, binFile);
-  }
+    // write data to file
+    for (int i=size-1; i>=0; i--) {
+      dataByte = data >> 8*i;
+      fwrite(&dataByte, 1, 1, binFile);
+    }
   }
   catch( ... ) {
     snprintf(buffer, sizeof(buffer), "ERROR: An exception occurred in routine 'writeBigEndian'. \n");

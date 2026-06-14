@@ -228,11 +228,11 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
     x = 0;
     while (isxdigit(*++p)) {
       if ((unsigned int)x > (unsigned int)LONGLIMIT/16)
-	NEWERROR(*errorPtr, NUMBER_TOO_BIG);
+	    NEWERROR(*errorPtr, NUMBER_TOO_BIG);
       if (*p > '9')
-	x = 16 * x + (*p - 'A' + 10);
+	      x = 16 * x + (*p - 'A' + 10);
       else
-	x = 16 * x + (*p - '0');
+	      x = 16 * x + (*p - '0');
     }
     *numberPtr = x;
     return p;
@@ -259,7 +259,7 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
     /* Convert the digits into an integer */
     while (*p >= '0' && *p < '0' + base) {
       if ((unsigned int)x > ((unsigned int)(LONGLIMIT - (*p - '0')) / base)) {
-	NEWERROR(*errorPtr, NUMBER_TOO_BIG);
+	      NEWERROR(*errorPtr, NUMBER_TOO_BIG);
       }
       x = (int) ( (int) ((int) base * x) + (int) (*p - '0') );
       p++;
@@ -274,17 +274,17 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
     p++;
     while (!endFlag && *p) {
       if (*p == '\'')           // if '
-	if (*(p+1) == '\'') {   // if ''
-	  x = (x << 8) + *p;
-	  i++;
-	  p++;
-	}
-	else                    // ending ' found
-	  endFlag = true;       // end of string literal
-      else {
-	x = (x << 8) + *p;
-	i++;
-      }
+	      if (*(p+1) == '\'') {   // if ''
+	        x = (x << 8) + *p;
+	        i++;
+	        p++;
+	      }
+	      else                    // ending ' found
+	        endFlag = true;       // end of string literal
+            else {
+	            x = (x << 8) + *p;
+	            i++;
+            }
       p++;
     }
     if (i == 0 || *p == '\0') { // if no operand or unexpected end of string
@@ -305,7 +305,7 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
        (only SIGCHARS characters are significant) */
     do {
       if (i < SIGCHARS)
-	name[i++] = *p;
+	      name[i++] = *p;
       p++;
     } while (isalnum(*p) || *p == '_' || *p == '$');
     name[i] = '\0';
@@ -318,14 +318,14 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
       /* If symbol was found, and it's not a register
          list symbol, then return its value */
       if (!(symbol->flags & REG_LIST_SYM)) {
-	*numberPtr = symbol->value;
+	      *numberPtr = symbol->value;
 
-	if (pass2)
-	  *refPtr = (symbol->flags & BACKREF);
+	      if (pass2)
+	        *refPtr = (symbol->flags & BACKREF);
       } else {
-	/* If it is a register list symbol, return error */
-	*numberPtr = 0;
-	NEWERROR(*errorPtr, REG_LIST_SPEC);
+	      /* If it is a register list symbol, return error */
+	      *numberPtr = 0;
+	      NEWERROR(*errorPtr, REG_LIST_SPEC);
       }
     else {
       /* Otherwise return an error */
@@ -361,8 +361,6 @@ char *evalNumber(char *p, int *numberPtr, bool *refPtr, int *errorPtr)
   }
 }
 
-
-
 int precedence(char op)
 {
   /* Compute the precedence of an operator. Higher numbers indicate
@@ -385,11 +383,8 @@ int precedence(char op)
   }
 }
 
-
-
 int doOp(int val1, int val2, char op, int *result)
 {
-
   /* Performs the operation of the operator on the two operands.
      Returns OK or DIV_BY_ZERO. */
 
@@ -404,18 +399,18 @@ int doOp(int val1, int val2, char op, int *result)
     case '*' : *result = val1 * val2;  return OK;
     case '/' :
       if (val2 != 0) {
-	*result = val1 / val2;
-	return OK;
+	      *result = val1 / val2;
+	      return OK;
       }
       else
-	return DIV_BY_ZERO;
+      	return DIV_BY_ZERO;
     case '\\':
       if (val2 != 0) {
-	*result = val1 % val2;
-	return OK;
+	      *result = val1 % val2;
+	      return OK;
       }
       else
-	return DIV_BY_ZERO;
+      	return DIV_BY_ZERO;
   }
   return INV_OPERATOR;
 }

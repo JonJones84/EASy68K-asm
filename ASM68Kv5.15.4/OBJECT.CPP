@@ -213,6 +213,9 @@ int outputObj(int newAddr, int data, int size)
         snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%08X", data);
 	      obyteCount += 4;
 	      break;
+        snprintf(objPtr, sizeof(sRecord)-(objPtr-sRecord), "%08X", data); // RA
+	      obyteCount += 4;
+	      break;
       default :
         snprintf(buffer, sizeof(buffer), "outputObj: INVALID SIZE CODE!\n");
         fprintf(stderr,"%s\n",buffer);

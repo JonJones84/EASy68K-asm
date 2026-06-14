@@ -134,11 +134,13 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
   else if (op->mode == AnIndDisp || op->mode == PCDisp) {
     if (pass2) {
       disp = op->data;
-      if (op->mode == PCDisp)
-	disp -= loc;
+      if (op->mode == PCDisp) {
+        disp -= loc;
+      }
       output(disp & 0xFFFF, WORD_SIZE);
-      if (disp < -32768 || disp > 32767)        //CK 3.7.3 undo 2.9.2 change
-	NEWERROR(*errorPtr, INV_DISP);
+      if (disp < -32768 || disp > 32767) {
+        NEWERROR(*errorPtr, INV_DISP);
+      }
     }
     loc += 2;
   }
@@ -146,11 +148,11 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
     if (pass2) {
       disp = op->data;
       if (op->mode == PCIndex)
-	disp -= loc;
+      	disp -= loc;
       output((( (int) (op->size) == LONG_SIZE) ? 0x800 : 0)
 	        | (op->index << 12) | (disp & 0xFF), WORD_SIZE);
       if (disp < -128 || disp > 127)
-	NEWERROR(*errorPtr, INV_DISP);
+	      NEWERROR(*errorPtr, INV_DISP);
     }
     loc += 2;
   }
@@ -158,7 +160,7 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
     if (pass2) {
       output(op->data & 0xFFFF, WORD_SIZE);
       if (op->data < -32768 || op->data > 32767)
-	NEWERROR(*errorPtr, INV_ABS_ADDRESS);
+	      NEWERROR(*errorPtr, INV_ABS_ADDRESS);
     }
     loc += 2;
   }
@@ -170,29 +172,28 @@ int extWords(opDescriptor *op, int size, int *errorPtr)
   else if (op->mode == IMMEDIATE) {
     if (!size || size == WORD_SIZE) {
       if (pass2) {
-	output(op->data & 0xFFFF, WORD_SIZE);
-      if (op->data < -32768 || op->data > 65535)
-	  NEWERROR(*errorPtr, INV_16_BIT_DATA);
+      	output(op->data & 0xFFFF, WORD_SIZE);
+        if (op->data < -32768 || op->data > 65535)
+	        NEWERROR(*errorPtr, INV_16_BIT_DATA);
       }
       loc += 2;
     }
     else if (size == BYTE_SIZE) {
       if (pass2) {
-	output(op->data & 0xFF, WORD_SIZE);
-	if (op->data < -128 || op->data > 255)
-	  NEWERROR(*errorPtr, INV_8_BIT_DATA);
-
+      	output(op->data & 0xFF, WORD_SIZE);
+	      if (op->data < -128 || op->data > 255)
+	        NEWERROR(*errorPtr, INV_8_BIT_DATA);
       }
       loc += 2;
     }
     else if (size == LONG_SIZE) {
       if (pass2)
-	output(op->data, LONG_SIZE);
+      	output(op->data, LONG_SIZE);
       loc += 4;
     }
   } else {
     snprintf(buffer, sizeof(buffer),"INVALID EFFECTIVE ADDRESSING MODE!\n");
-     fprintf(stderr,"%s\n",buffer);
+    fprintf(stderr,"%s\n",buffer);
    return MILD_ERROR;
   }
 

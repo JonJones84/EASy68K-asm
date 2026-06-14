@@ -108,13 +108,13 @@ int org(int size, char *label, char *op, int *errorPtr)
     if (isspace(*op) || !*op) {
       // Check for an odd value, adjust to one higher
       if (newLoc & 1) {
-	NEWERROR(*errorPtr, ODD_ADDRESS);
-	newLoc++;
+	      NEWERROR(*errorPtr, ODD_ADDRESS);
+	      newLoc++;
       }
       loc = newLoc;
       // Define the label attached to this directive, if any
       if (*label)
-	define(label, loc, pass2, true, errorPtr);
+	      define(label, loc, pass2, true, errorPtr);
       // Show new location counter on listing
       listLoc();
     }
@@ -229,8 +229,8 @@ int funct_end(int size, char *label, char *op, int *errorPtr)
     if (isspace(*op) || !*op) {
       /* Check for an odd value, adjust to one higher */
       if (newLoc & 1) {
-	NEWERROR(*errorPtr, ODD_ADDRESS);
-	newLoc++;
+	      NEWERROR(*errorPtr, ODD_ADDRESS);
+	      newLoc++;
       }
       startAddress = newLoc;
     }
@@ -265,13 +265,13 @@ int equ(int size, char *label, char *op, int *errorPtr)
   else if (*errorPtr < ERRORN)
     if (isspace(*op) || !*op)
       if (!*label) {
-	NEWERROR(*errorPtr, LABEL_REQUIRED);
+      	NEWERROR(*errorPtr, LABEL_REQUIRED);
       }	else {
-	define(label, value, pass2, true, errorPtr);
-	if (pass2 && listFlag && *errorPtr < MINOR) {
-	  snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value);
-	  listPtr += 10;
-	}
+	      define(label, value, pass2, true, errorPtr);
+	      if (pass2 && listFlag && *errorPtr < MINOR) {
+	        snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value);
+	        listPtr += 10;
+	      }
       }
     else
       NEWERROR(*errorPtr, SYNTAX);
@@ -302,15 +302,15 @@ int set(int size, char *label, char *op, int *errorPtr)
    if (*errorPtr < ERRORN)
     if (isspace(*op) || !*op)
       if (!*label) {
-	NEWERROR(*errorPtr, LABEL_REQUIRED);
+      	NEWERROR(*errorPtr, LABEL_REQUIRED);
       } else {
-	error = OK;
-	symbol = define(label, value, pass2, false, &error);
-	symbol->flags |= REDEFINABLE;
-	if (pass2 & listFlag) {
-	  snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value);
-	  listPtr += 10;
-	}
+	      error = OK;
+	      symbol = define(label, value, pass2, false, &error);
+	      symbol->flags |= REDEFINABLE;
+	      if (pass2 & listFlag) {
+	        snprintf(listPtr, sizeof(listData) - (listPtr - listData), "=%08X ", value);
+	        listPtr += 10;
+	      }
       }
     else
       NEWERROR(*errorPtr, SYNTAX);
@@ -362,16 +362,16 @@ int dc(int size, char *label, char *op, int *errorPtr)
       }
       p = string;
       while (*p) {
-	outVal = *p++;
-	if (size > BYTE_SIZE)
-	  outVal = (outVal << 8) + *p++;
-	if (size > WORD_SIZE) {
-	  outVal = (outVal << 16) + (*p++ << 8);
-	  outVal += *p++;
-	}
-	if (pass2)
-	  output(outVal, size);
-	loc += size;
+	      outVal = *p++;
+	      if (size > BYTE_SIZE)
+	        outVal = (outVal << 8) + *p++;
+	      if (size > WORD_SIZE) {
+	        outVal = (outVal << 16) + (*p++ << 8);
+	        outVal += *p++;
+	      }
+	      if (pass2)
+	        output(outVal, size);
+	      loc += size;
       }
     } else {
 
@@ -379,15 +379,15 @@ notString:                              // process non strings
       op = skipSpace(op);               // skip spaces
       op = eval(op, &outVal, &backRef, errorPtr);
       if (*errorPtr > SEVERE)
-	return NORMAL;
+	      return NORMAL;
       if (pass2)
-	output(outVal, size);
+	      output(outVal, size);
       loc += size;
       if (size == BYTE_SIZE && (outVal < -128 || outVal > 255)) {
-	NEWERROR(*errorPtr, INV_8_BIT_DATA);
+	      NEWERROR(*errorPtr, INV_8_BIT_DATA);
       }
       else if (size == WORD_SIZE && (outVal < -32768 || outVal > 65535))
-	NEWERROR(*errorPtr, INV_16_BIT_DATA);
+	      NEWERROR(*errorPtr, INV_16_BIT_DATA);
     }
     op = skipSpace(op);               // skip spaces
   } while (*op++ == ',');
@@ -405,14 +405,14 @@ char *collect(char *s, char *d)
   while (*s) {
     if (*s == '\'')
       if (*(s+1) == '\'') {
-	*d++ = *s;
-	s += 2;
+	      *d++ = *s;
+	      s += 2;
       } else {
-	*d++ = '\0';
-	*d++ = '\0';
-	*d++ = '\0';
-	*d = '\0';
-	return ++s;
+	      *d++ = '\0';
+	      *d++ = '\0';
+	      *d++ = '\0';
+	      *d = '\0';
+	      return ++s;
       }
     else
       *d++ = *s++;
@@ -480,11 +480,12 @@ int dcb(int size, char *label, char *op, int *errorPtr)
       CEXflag = false;          // prevent display of all DCB data
       for (i = 0; i < blockSize; i++) {
         output(blockVal, size);
-	loc += size;
+	      loc += size;
       }
       CEXflag = CEXsave;
-    }else
+    } else {
       loc += blockSize * size;
+    }
   }
 
   return NORMAL;
@@ -700,9 +701,9 @@ int include(int size, char *label, char *fileName, int *errorPtr)
       continuation = false;
       printCond = false;           // true to print condition on listing line
       if(line[0] != '*' && line[1] != '~')      // don't assemble font info
-
         assemble(line, &error);
-        lineNum++;
+
+      lineNum++;
     }
     fclose(inFile);
     inFile = tmpInFile;                 // restore previous input file

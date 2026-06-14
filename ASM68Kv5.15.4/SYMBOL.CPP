@@ -139,24 +139,24 @@ symbolDef *lookup(char *sym, int create, int *errorPtr)
     if (s && !cmp) {
       if (create) {
         if (!(s->flags & REDEFINABLE))  // if not SET directive (CK 10/12/2009)
- 	  NEWERROR(*errorPtr, MULTIPLE_DEFS);
+ 	        NEWERROR(*errorPtr, MULTIPLE_DEFS);
       }
       t = s;
     }
     // Otherwise insert the symbol in the list
     else if (create)
       if (last) {
-	// The symbol goes after an existing symbol
-	t = new symbolDef;
-	last->next = t;
-	t->next = s;
-	strcpy(t->name, sym);
+	      // The symbol goes after an existing symbol
+	      t = new symbolDef;
+	      last->next = t;
+	      t->next = s;
+	      strcpy(t->name, sym);
       } else {
-	/* The symbol goes at the head of a list */
-	t = new symbolDef;
-	t->next = htable[h];
-	htable[h] = t;
-	strcpy(t->name, sym);
+	      /* The symbol goes at the head of a list */
+	      t = new symbolDef;
+	      t->next = htable[h];
+	      htable[h] = t;
+	      strcpy(t->name, sym);
       }
     else
       NEWERROR(*errorPtr, UNDEFINED);
@@ -167,7 +167,6 @@ symbolDef *lookup(char *sym, int create, int *errorPtr)
     strcpy(t->name, sym);
   } else
     NEWERROR(*errorPtr, UNDEFINED);
-
   }
   catch( ... ) {
     NEWERROR(*errorPtr, EXCEPTION);

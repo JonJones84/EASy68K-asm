@@ -105,19 +105,19 @@ char *opParse(char *p, opDescriptor *d, int *errorPtr)
 	  return NULL;
 	}
       } else
-          return NULL;
+        return NULL;
     }
 
     // Check for address or data register direct
     if (isRegNum(p[1]) && isTerm(p[2])) {
       if (p[0] == 'D') {
         d->mode = DnDirect;
-	      d->reg = p[1] - '0';
-	      return (p + 2);
+	d->reg = p[1] - '0';
+	return (p + 2);
       } else if (p[0] == 'A') {
-	      d->mode = AnDirect;
-	      d->reg = p[1] - '0';
-	      return (p + 2);
+	d->mode = AnDirect;
+	d->reg = p[1] - '0';
+	return (p + 2);
       }
     }
     // Check for Stack Pointer (i.e., A7) direct
@@ -131,19 +131,19 @@ char *opParse(char *p, opDescriptor *d, int *errorPtr)
                         (p[1] == 'S' && p[2] == 'P')))
     {
       if (p[1] == 'S')
-	      d->reg = 7;
+	d->reg = 7;
       else
-	      d->reg = p[2] - '0';
+	d->reg = p[2] - '0';
       if (p[3] == ')') {
-	      // Check for plain address register indirect
-	      if (isTerm(p[4])) {
-	        d->mode = AnInd;
-	        return p+4;
-	      }
+	// Check for plain address register indirect
+	if (isTerm(p[4])) {
+	  d->mode = AnInd;
+	  return p+4;
+	}
         // Check for postincrement
         else if (p[4] == '+') {
-	        d->mode = AnIndPost;
-	        return p+5;
+	  d->mode = AnIndPost;
+	  return p+5;
         }
       }
       // Check for address register indirect with index  (An,Xi)
@@ -154,39 +154,36 @@ char *opParse(char *p, opDescriptor *d, int *errorPtr)
         d->backRef = true;
         d->index = p[5] - '0';
         if (p[4] == 'A')
-	        d->index += 8;
-        if (p[6] == '.') {
-          // Determine size of index register
-          if (p[7] == 'W') {
-            d->size = WORD_SIZE;
-            return p+9;
-          } else if (p[7] == 'L') {
+	  d->index += 8;
+        if (p[6] == '.')
+	  // Determine size of index register
+	  if (p[7] == 'W') {
+	    d->size = WORD_SIZE;
+	    return p+9;
+	  } else if (p[7] == 'L') {
             d->size = LONG_SIZE;
             return p+9;
           } else {
             NEWERROR(*errorPtr, SYNTAX);
             return NULL;
           }
-        }
         else if (p[6] == ')') {
-            // Default index register size is Word
-            d->size = WORD_SIZE;
-            return p+7;
-          } else {
-            NEWERROR(*errorPtr, SYNTAX);
-            return NULL;
-          }
+          // Default index register size is Word
+          d->size = WORD_SIZE;
+          return p+7;
+        } else {
+          NEWERROR(*errorPtr, SYNTAX);
+          return NULL;
         }
-
+      }
     }
     // Check for address register indirect with predecrement -(An) or -(SP)
     if (p[0] == '-' && p[1] == '(' && p[4] == ')' &&
       ((p[2] == 'A' && isRegNum(p[3])) || (p[2] == 'S' && p[3] == 'P'))) {
       if (p[2] == 'S')
-	      d->reg = 7;
+	d->reg = 7;
       else
-	      d->reg = p[3] - '0';
-
+	d->reg = p[3] - '0';
       d->mode = AnIndPre;
       return p+5;
     }
@@ -198,7 +195,7 @@ char *opParse(char *p, opDescriptor *d, int *errorPtr)
         if((n[1] == 'A' && isRegNum(n[2])) || (n[1] == 'S' && n[2] == 'P') ) {
           p++;                  // skip (
           // evaluate displacement, p points to ','
-	        p = eval(p, &(d->data), &(d->backRef), errorPtr);
+	  p = eval(p, &(d->data), &(d->backRef), errorPtr);
         }
       }
 
