@@ -88,22 +88,22 @@ const char* BccCodes[BCC_COUNT][5] = {
 //           CMP ea,Rn    CMP ea,Rn   CMP ea,Rn    CMP ea,Rn    <-- use this CMP operation
 //            ea<cc>#n   ea<cc>#n OR   #n<cc>ea    #n<cc>ea OR  <-- if used like this
 //           CMP #n,ea    CMP #n,ea   CMP #n,ea    CMP #n,ea    <-- use this CMP operation
-   "<GT>",      "BLE",      "BGT",      "BGE",      "BLT",    //<-- with condition below
-   "<GE>",      "BLT",      "BGE",      "BGT",      "BLE",
-   "<LT>",      "BGE",      "BLT",      "BLE",      "BGT",
-   "<LE>",      "BGT",      "BLE",      "BLT",      "BGE",
-   "<EQ>",      "BNE",      "BEQ",      "BNE",      "BEQ",
-   "<NE>",      "BEQ",      "BNE",      "BEQ",      "BNE",
-   "<HI>",      "BLS",      "BHI",      "BHS",      "BLO",
-   "<HS>",      "BLO",      "BHS",      "BHI",      "BLS",
-   "<CC>",      "BLO",      "BCC",      "BHI",      "BLS",
-   "<LO>",      "BHS",      "BLO",      "BLS",      "BHI",
-   "<CS>",      "BHS",      "BCS",      "BLS",      "BHI",
-   "<LS>",      "BHI",      "BLS",      "BLO",      "BHS",
-   "<MI>",      "BPL",      "BMI",      "BPL",      "BMI",
-   "<PL>",      "BMI",      "BPL",      "BMI",      "BPL",
-   "<VC>",      "BVS",      "BVC",      "BVS",      "BVC",
-   "<VS>",      "BVC",      "BVS",      "BVC",      "BVS"
+   {"<GT>",      "BLE",      "BGT",      "BGE",      "BLT"},    //<-- with condition below
+   {"<GE>",      "BLT",      "BGE",      "BGT",      "BLE"},
+   {"<LT>",      "BGE",      "BLT",      "BLE",      "BGT"},
+   {"<LE>",      "BGT",      "BLE",      "BLT",      "BGE"},
+   {"<EQ>",      "BNE",      "BEQ",      "BNE",      "BEQ"},
+   {"<NE>",      "BEQ",      "BNE",      "BEQ",      "BNE"},
+   {"<HI>",      "BLS",      "BHI",      "BHS",      "BLO"},
+   {"<HS>",      "BLO",      "BHS",      "BHI",      "BLS"},
+   {"<CC>",      "BLO",      "BCC",      "BHI",      "BLS"},
+   {"<LO>",      "BHS",      "BLO",      "BLS",      "BHI"},
+   {"<CS>",      "BHS",      "BCS",      "BLS",      "BHI"},
+   {"<LS>",      "BHI",      "BLS",      "BLO",      "BHS"},
+   {"<MI>",      "BPL",      "BMI",      "BPL",      "BMI"},
+   {"<PL>",      "BMI",      "BPL",      "BMI",      "BPL"},
+   {"<VC>",      "BVS",      "BVC",      "BVS",      "BVC"},
+   {"<VS>",      "BVC",      "BVS",      "BVC",      "BVS"}
 
 
 };
